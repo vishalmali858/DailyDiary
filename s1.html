@@ -1,0 +1,73 @@
+<!DOCTYPE>
+<html>
+
+<head>
+<link href="css/style.css" rel='stylesheet' type='text/css' />
+<!--webfonts-->
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:600italic,400,300,600,700' rel='stylesheet' type='text/css'>
+<!--//webfonts-->
+<title>
+	DAILY_DAIRY-Register User
+</title>
+<script>
+	function CP()
+	{
+		var un=document.form1.email.value;
+		var atpos=un.indexOf("@");
+		var dotpos=un.lastIndexOf(".");
+		var flag=0;
+		if(un=="")
+		{
+			alert("ENTER USERNAME CREDENTAILS");
+			return false;
+		}
+		for(i=0;i<=un.length;i++)
+		{
+			if(un.charAt(i)=='@')
+			{
+				flag++;
+			}
+		}
+		if(atpos<1 || dotpos<atpos || (dotpos-atpos)<2)
+		{
+			alert("Enter a valid Email-Id");
+			return false;
+		}
+		if(flag>1)
+		{
+			alert("Only 1 @ should be present");
+			return false;
+		}	
+	}
+</script>
+</head>
+<body style=background-image:url("e2.jpg")>
+	<div class="loginForm">
+		<div class="head">
+			<center><img src="logo.png"  width="150" height="100"><br><br>
+			<b><font color="blue" size="5" face="verdana">USER REGISTER:<br><font color="black" size="3">STEP 1 OUT OF 3</font></font></b></center>
+		</div>
+		<br><br><br><br><br><br><br><br>
+		<form name="form1" class="form1" onSubmit="return CP(document.form1.password)" method="post" target="Login">
+		<input type="hidden" name="submitted" value="true"/>
+		<font color="black" size="5">
+		EMAIL ID:<font color="red" size="3">(USE DURING LOGIN AS USERNAME)</font><br><input type="text" name="email" placeholder="E-Mail ID">
+		<br><br>
+		SUBJECT:<font color="red" size="3"><br>
+		<input type="password" name="password" placeholder="Password"><br><br>
+		COMMENTS:<br><textarea cols="'5 rows="6">ANY QUERIES !! YOU ARE WELCOME</textarea><br><br>
+		<center><input type="submit" value="NEXT">
+		<a href="start1.html" target="_top"><input type="button" value="HOME"></a>
+		</center>
+		</form>
+	</div></font>
+</body>
+</html>
+
+
+
+
+
+
+</body>
+</html>

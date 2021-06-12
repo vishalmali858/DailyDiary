@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Local File I/O</title>
+<script type="text/javascript">
+<!-- // Begin
+var ForReading = 1, ForWriting = 2, ForAppending = 8;
+var objFSO = new ActiveXObject("Scripting.FileSystemObject");
+
+function checkText(fld, btn) {
+  btn.disabled = false;
+  fld.onkeypress = null;
+  return true;
+}
+function checkFile(obj, div, btn, btn2, fld) {
+  div.innerHTML = '<p><b>File:</b><br><b>Size:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Last Modified:</b></p>';
+  btn.disabled = true;
+  btn2.disabled = true;
+  fld.value = '';
+  fld.onkeypress = new Function("return checkText("+
+                   "document."+fld.form.name+"."+fld.name+","+
+                   "document."+btn2.form.name+"."+btn2.name+")");
+//
+//  if (obj.value.indexOf(":") != 1) {
+//    alert("Local file name must include a drive letter.");
+//    return false;
+//  }
+  var ary = obj.value.split("\\");
+  if (ary.length < 2) {
+    alert("Local file name must include a path.");
+    return false;
+  }
+  if (!/(\.txt)$/i.test(obj.value)) {
+    alert("Local file name must include the '.txt' extension.");
+    return false;
+  }
+//
+  try {
+    objFile = objFSO.GetFile(obj.value);
+  } catch(e) {
+    if (e.message != "File not found") {
+      alert(e.message);
+      return false;
+    } else {
+      try {
+        if (confirm(obj.value+"\n"+
+            "does not exist.  Click 'Ok' to create it.")) {
+          objFile = objFSO.CreateTextFile(obj.value);
+          objFile.Close();
+          objFile = objFSO.GetFile(obj.value);
+        } else {
+          return false;
+        }
+      } catch(e) {
+        alert(e.message);
+        return false;
+      }
+    }
+  }
+  fileSpecs(div, btn);
+  objFile = null;
+  return true;
+}
+function fileSpecs(div, btn) {
+  if (objFile.Size > 0) {
+    btn.disabled = false;
+  } else {
+    btn.disabled = true;
+  }
+  var str = '<p>';
+  str += '<b>File:</b> ' + objFile.Path + '<br>';
+  str += '<b>Size:</b> ';
+  if (objFile.Size < 1024) {
+    str += objFile.Size + ' bytes';
+  } else {
+    str += (objFile.Size/1024).toFixed(1) + ' Kbytes';
+  }
+  str += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+  str += '<b>Last Modified:</b> ' + objFile.DateLastModified;
+  str += '</p>';
+  div.innerHTML = str;
+}
+function loadFile(btn, obj, div, fld) {
+  objFile = objFSO.GetFile(obj.value);
+  objStream = objFile.OpenAsTextStream(ForReading);
+  fld.value = objStream.ReadAll();
+  objStream.Close();
+  objStream= null;
+  fileSpecs(div, btn);
+  objFile = null;
+  return true;
+}
+function saveFile(btn, obj, div, fld, btn2) {
+  btn.disabled = true;
+  objFile = objFSO.GetFile(obj.value);
+  objStream = objFile.OpenAsTextStream(ForWriting);
+  objStream.Write(fld.value);
+  objStream.Close();
+  objStream = null;
+  objFile = objFSO.GetFile(obj.value);
+  fileSpecs(div, btn2);
+  objFile = null;
+  fld.value = '';
+  fld.onkeypress = new Function("return checkText("+
+                   "document."+fld.form.name+"."+fld.name+","+
+                   "document."+btn.form.name+"."+btn.name+")");
+  return true;
+}
+// End -->
+</script>
+</head>
+
+<body>
+<center>
+<form name="myForm" onsubmit="return false;">
+  <table width="720">
+    <tr>
+      <td colspan="4">
+        <div id="fileSpec">
+          <p><b>File:</b><br><b>Size:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Last Modified:</b></p>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" width="580" align="center" valign="top">
+        <textarea rows="25" name="fileArea" cols="70"
+         onkeypress="return checkText(this, btnSave);"></textarea> </td>
+      <td rowspan="2" width="140" valign="top"><p>This is a simple demonstration of
+        a browser-based local text file editor.&nbsp; Begin by clicking the <b>Browse</b>
+        button to select an existing text file from your local hard drive.&nbsp;
+        (In the Browse dialog, you may type in a new file name if
+        desired.)&nbsp; The selected file information is then displayed at the
+        top of the page.&nbsp; For an existing file, click the <b>Load</b>
+        button next.&nbsp; After editing, click the <b>Save</b> button to
+        complete the demonstration.</p></td>
+    </tr>
+    <tr>
+      <td align="left">
+        <input type="file" name="fileName" size="50"
+         onchange="return checkFile(this, document.getElementById('fileSpec'), btnLoad, btnSave, fileArea);"> </td>
+      <td align="center">
+        <input type="button" name="btnLoad" value="Load" disabled
+         onclick="return loadFile(this, fileName, document.getElementById('fileSpec'), fileArea);"> </td>
+      <td align="center">
+        <input type="button" name="btnSave" value="Save" disabled
+         onclick="return saveFile(this, fileName, document.getElementById('fileSpec'), fileArea, btnLoad);"> </td>
+    </tr>
+  </table>
+</form>
+</center>
+
+</body>
+</html>
+Last edited by so_is_this; 12-22-2006 at 10:30 PM.
+Reply With Quote Reply With Quote Share on Google+  
